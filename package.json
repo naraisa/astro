@@ -1,0 +1,21 @@
+{
+  "name": "ver0",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "astro": "^5.0.9",
+    "microcms-js-sdk": "^3.1.2"
+  },
+  "volta": {
+    "node": "20.18.1"
+  },
+  "devDependencies": {
+    "sass-embedded": "^1.83.0"
+  }
+}
