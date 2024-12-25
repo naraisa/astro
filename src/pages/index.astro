@@ -7,14 +7,27 @@ const title = 'Homepage';
 const description = 'Welcome to our homepage!';
 
 //microCMS呼び出し
-import { getBlogs } from "../library/microcms";
+import { getBlogs, getCategory } from "../library/microcms";
 const response = await getBlogs({ fields: ["id", "title", "publishedAt", "eyecatch", "category"] });
-console.log(response)
+const category = await getCategory();
+console.log(category)
 ---
 
 <Layout title={ title } description={ description }>
   <div class="mv">
     News
+  </div>
+  <div class="">
+    <ul class="tags">
+    {
+      category.contents.map((record: any) => (
+        <li><a href={`/category/${record.id}`} class="mini-tag">{record.name}</a></li>
+      ))
+    }
+    </ul>
+  </div>
+  <div>
+    <hr>
   </div>
   <ul class="list">
     {
@@ -62,6 +75,19 @@ console.log(response)
     color: white;
   }
 
+  .tags {
+    display: flex;
+    gap: 15px;
+  }
+
+  .mini-tag {
+    text-decoration: none;
+    color: #333;
+    border: solid 1px #555;
+    border-radius: 0.4em;
+    font-size: 80%;
+    padding: 0.2em .8em;
+  }
 
 </style>
 
