@@ -1,6 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { getBlogs, getBlogDetail } from "../library/microcms";
+import { dateFormat } from '../utils/dateFormat';
 
 // 詳細記事ページの全パスを取得
 export async function getStaticPaths() {
@@ -19,11 +20,9 @@ const all = await getBlogs({ fields: ["id", "title", "eyecatch", "category"] });
 
 let other = [];
 let category:string = '';
-let categoryID:string = '';
 
 if(blog.category !== null) {
   category = blog.category.name;
-  categoryID = blog.category.id;
 }
 
 for(let i = 0; i < all.contents.length; i++) {
@@ -37,7 +36,8 @@ for(let i = 0; i < all.contents.length; i++) {
 <Layout title={blog.title}>
   <main style="padding:2em">
     <h1 class="title">{blog.title}</h1>
-    <p class="publishedAt">公開日時：{blog.publishedAt}</p>
+    <!-- dateFormat(blog.publishedAt) -->
+    <p class="publishedAt">公開日時：{dateFormat(blog.publishedAt)}</p>
     {
       blog.category ? (
         <a href={`/category/${blog.category.id}`} class="tag">{blog.category.name}</a>

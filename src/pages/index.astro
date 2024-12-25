@@ -1,14 +1,15 @@
 ---
 import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
+import { dateFormat } from '../utils/dateFormat';
 
 const title = 'Homepage';
 const description = 'Welcome to our homepage!';
 
 //microCMS呼び出し
 import { getBlogs } from "../library/microcms";
-const response = await getBlogs({ fields: ["id", "title", "eyecatch", "category"] });
-
+const response = await getBlogs({ fields: ["id", "title", "publishedAt", "eyecatch", "category"] });
+console.log(response)
 ---
 
 <Layout title={ title } description={ description }>
@@ -19,6 +20,7 @@ const response = await getBlogs({ fields: ["id", "title", "eyecatch", "category"
     {
       response.contents.map((content: any) => (
         <li>
+          <p style="width: 100%;">{dateFormat(content.publishedAt)}</p>
           {
             content.category && (
               <div class="tag-wrap"><a href={`/category/${content.category.id}`} class="tag">{content.category.name}</a></div>

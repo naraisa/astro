@@ -3,6 +3,7 @@
 
 import Layout from "../../layouts/Layout.astro";
 import { getBlogs, getCategory } from "../../library/microcms";
+import { dateFormat } from '../../utils/dateFormat';
 
 export interface staticPath {
     params: {
@@ -12,9 +13,9 @@ export interface staticPath {
     }
 }
 
+// カテゴリのパスを取得
 export async function getStaticPaths() {
   const response = await getCategory({ fields: ["id", "name"] });
-  console.log(response)
   return response.contents.map((content) => ({
     params: {
       categoryId: content.id,
@@ -27,7 +28,6 @@ export async function getStaticPaths() {
 
 const { categoryId } = Astro.params;
 const { name } = Astro.props;
-console.log(Astro.props)
 
 const blogs = await getBlogs({
   filters: `category[equals]${categoryId}`,
@@ -41,6 +41,7 @@ const blogs = await getBlogs({
     {
       blogs.contents.map((content: any) => (
         <li>
+					<p style="width: 100%;">{dateFormat(content.publishedAt)}</p>
 					<a href={`/${content.id}`}>
 						<p>{content.title}</p>
 						<div class="thumb">
@@ -84,7 +85,7 @@ const blogs = await getBlogs({
 		li {
 			list-style: none;
 			display: flex;
-			flex-wrap: nowrap;
+			flex-wrap: wrap;
 			border-bottom: solid 2px #ccc;
 		}
 	}
