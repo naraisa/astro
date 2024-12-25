@@ -7,64 +7,59 @@ const description = 'Welcome to our homepage!';
 
 //microCMS呼び出し
 import { getBlogs } from "../library/microcms";
-const response = await getBlogs({ fields: ["id", "title", "eyecatch"] });
+const response = await getBlogs({ fields: ["id", "title", "eyecatch", "category"] });
 
 ---
 
 <Layout title={ title } description={ description }>
-	<div class="mv">
-		News
-	</div>
-	<ul class="list">
-		{
-			response.contents.map((content: any) => (
-				<li>
-					<a href={content.id}>
-						<p>{content.title}</p>
-						<div class="thumb">
-							{content.eyecatch && (
-        <img src={content.eyecatch.url} alt="サムネイル" />
-      )}
-						</div>
-					</a>
-				</li>
-			))
-		}
-	</ul>
+  <div class="mv">
+    News
+  </div>
+  <ul class="list">
+    {
+      response.contents.map((content: any) => (
+        <li>
+          {
+            content.category && (
+              <div class="tag-wrap"><a href={`/category/${content.category.id}`} class="tag">{content.category.name}</a></div>
+            )
+          }
+          <a href={content.id}>
+            <p>{content.title}</p>
+            <div class="thumb">
+              {content.eyecatch && (
+                <img src={content.eyecatch.url} alt="サムネイル" />
+              )}
+            </div>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
 </Layout>
 
 
 <style scoped>
-	.thumb {
-		width: 100px;
-		height: 100px;
-		overflow: hidden;
-	}
-	.thumb img {
-		object-fit: contain;
-		width: 100%;
-	}
+  .thumb {
+    width: 100px;
+    height: 100px;
+    overflow: hidden;
+  }
+  .thumb img {
+    object-fit: contain;
+    width: 100%;
+  }
 
-	.mv {
-		height: 20vh;
-		display: flex;
-		align-items: center;
-		padding: 3rem;
-		font-size: 200%;
-		background-color: cadetblue;
-		color: white;
-	}
+  .mv {
+    height: 20vh;
+    display: flex;
+    align-items: center;
+    padding: 3rem;
+    font-size: 200%;
+    background-color: cadetblue;
+    color: white;
+  }
 
-	.list {
-		width: 80%;
-		margin: 0 auto;
-		padding: 2rem;
 
-		li {
-			list-style: none;
-			display: flex;
-			flex-wrap: nowrap;
-			border-bottom: solid 2px #ccc;
-		}
-	}
 </style>
+

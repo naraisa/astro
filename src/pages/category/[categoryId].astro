@@ -1,0 +1,91 @@
+---
+// https://qiita.com/ueno-unt/items/279792bf5b9565498b24
+
+import Layout from "../../layouts/Layout.astro";
+import { getBlogs, getCategory } from "../../library/microcms";
+
+export interface staticPath {
+    params: {
+        pageName: string | undefined},
+    props: {
+      name: string | undefined,
+    }
+}
+
+export async function getStaticPaths() {
+  const response = await getCategory({ fields: ["id", "name"] });
+  console.log(response)
+  return response.contents.map((content) => ({
+    params: {
+      categoryId: content.id,
+    },
+    props: {
+      name: content.name
+    }
+  }));
+}
+
+const { categoryId } = Astro.params;
+const { name } = Astro.props;
+console.log(Astro.props)
+
+const blogs = await getBlogs({
+  filters: `category[equals]${categoryId}`,
+});
+---
+<Layout title={`${name}一覧`}>
+  <div class="mv">
+		{name}
+	</div>
+  <ul class="list">
+    {
+      blogs.contents.map((content: any) => (
+        <li>
+					<a href={`/${content.id}`}>
+						<p>{content.title}</p>
+						<div class="thumb">
+							{content.eyecatch && (
+                <img src={content.eyecatch.url} alt="サムネイル" />
+              )}
+						</div>
+					</a>
+				</li>
+      ))
+    }
+  </ul>
+</Layout>
+
+<style scoped>
+	.thumb {
+		width: 100px;
+		height: 100px;
+		overflow: hidden;
+	}
+	.thumb img {
+		object-fit: contain;
+		width: 100%;
+	}
+
+	.mv {
+		height: 20vh;
+		display: flex;
+		align-items: center;
+		padding: 3rem;
+		font-size: 200%;
+		background-color: cadetblue;
+		color: white;
+	}
+
+	.list {
+		width: 80%;
+		margin: 0 auto;
+		padding: 2rem;
+
+		li {
+			list-style: none;
+			display: flex;
+			flex-wrap: nowrap;
+			border-bottom: solid 2px #ccc;
+		}
+	}
+</style>

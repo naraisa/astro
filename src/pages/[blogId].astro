@@ -19,9 +19,11 @@ const all = await getBlogs({ fields: ["id", "title", "eyecatch", "category"] });
 
 let other = [];
 let category:string = '';
+let categoryID:string = '';
 
 if(blog.category !== null) {
   category = blog.category.name;
+  categoryID = blog.category.id;
 }
 
 for(let i = 0; i < all.contents.length; i++) {
@@ -38,7 +40,7 @@ for(let i = 0; i < all.contents.length; i++) {
     <p class="publishedAt">公開日時：{blog.publishedAt}</p>
     {
       blog.category ? (
-        <p class="tag">{blog.category.name}</p>
+        <a href={`/category/${blog.category.id}`} class="tag">{blog.category.name}</a>
       ): (
         <p class="tag">no-category</p>
       )
@@ -100,11 +102,5 @@ for(let i = 0; i < all.contents.length; i++) {
     object-fit: cover;
     margin: 0 1em 0 0;
   }
-  .tag {
-    display: inline-block;
-    line-height: 1;
-    border-radius: 0.4em;
-    background-color: #ccc;
-    padding: 0.5em;
-  }
+
 </style>
