@@ -13,6 +13,10 @@ export type Blog = {
   eyecatch?: {
     url:string
   };
+  category?: {
+    name:string,
+    id:string,
+  };
 } & MicroCMSListContent;
 
 // APIの呼び出し
