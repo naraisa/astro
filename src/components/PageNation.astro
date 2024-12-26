@@ -1,0 +1,156 @@
+---
+import type { itemListSingleType } from "../types/api";
+interface Props {
+  url: string;
+  itemList: {
+    data: itemListSingleType[];
+    start: number;
+    end: number;
+    size: number;
+    total: number;
+    currentPage: number;
+    lastPage: number;
+    url: {
+      current: string;
+      next: string;
+      prev: string;
+    };
+  };
+}
+const { url, itemList } = Astro.props;
+const STEP = 2; //現在のページの前後表示数
+
+const currentPage = Number(itemList.currentPage); //現在のページ数
+
+let maxPage = itemList.lastPage; //全ページ数
+
+let firstFlg = false; //・・・と最初のリンクを表示するかどうか
+let lastFlg = false; //・・・と最後のリンクを表示するかどうか
+
+let firstStep = currentPage - STEP; // 現在のページの前に表示する最初のページ
+let lastStep = currentPage + STEP; //現在のページの後に表示する最後のページ
+
+if (firstStep <= 0) {
+  firstStep = 1;
+  firstFlg = false;
+} else {
+  if (1 < firstStep) {
+    firstFlg = true;
+  } else {
+    firstFlg = false;
+  }
+}
+
+if (maxPage <= lastStep) {
+  lastStep = maxPage;
+  lastFlg = false;
+} else {
+  lastFlg = true;
+}
+
+/**
+ * 配列を出力
+ * @param start
+ * @param end
+ */
+const range = (start: number, end: number) =>
+  [...Array(end - start + 1)].map((_, i) => start + i);
+
+---
+
+<>
+  <div class="">
+    <ul class="page-navi">
+      {
+        1 < currentPage && (
+          <li class="flex bg-white rounded-md shadow-md ">
+            <a
+              href={(currentPage - 1) === 1 ? `${url}` : `${url}/${currentPage - 1}`}
+              class="flex items-center px-3 py-2 page-navi-btn"
+            >
+              ＜
+            </a>
+          </li>
+        )
+      }
+      {
+        firstFlg && (
+          <>
+            <li class="flex bg-white rounded-md shadow-md">
+              <a href={`${url}/1`} class="flex items-center px-3 py-2 page-navi-btn">
+                1
+              </a>
+            </li>
+            <li class="flex text-white items-center">...</li>
+          </>
+        )
+      }
+      {
+        range(firstStep, lastStep).map((number) => (
+          <li
+            class={`flex bg-white rounded-md shadow-md ${number === currentPage ? "is-current" : ""}`}
+          >
+            {number === currentPage ? (
+              <span class="flex items-center px-3 py-2 page-navi-btn">{number}</span>
+            ) : (
+              <a
+                href={number === 1 ? `${url}` : `${url}/${number}`}
+                class="flex items-center px-3 py-2 page-navi-btn"
+              >
+                {number}
+              </a>
+            )}
+          </li>
+        ))
+      }
+      {
+        lastFlg && (
+          <>
+            <li class="flex text-white items-center">...</li>
+            <li class="flex bg-white rounded-md shadow-md">
+              <a
+                href={`${url}/${maxPage}`}
+                class="flex items-center px-3 py-2 page-navi-btn"
+              >
+                {maxPage}
+              </a>
+            </li>
+          </>
+        )
+      }
+      {
+        currentPage  < maxPage && (
+          <li class="flex bg-white rounded-md shadow-md ">
+            <a
+              href={`${url}/${currentPage + 1}`}
+              class="flex items-center px-3 py-2 page-navi-btn"
+            >
+              ＞
+            </a>
+          </li>
+        )
+      }
+    </ul>
+  </div>
+</>
+
+<style scoped>
+  .page-navi {
+    display: flex;
+    justify-content: center;
+    gap: 1em;
+    padding: 0 0 1em 0;
+
+    .page-navi-btn {
+      width: 2em;
+      height: 2em;
+      display: block;
+      border-radius: .4em;
+      border: solid 1px #ccc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+    }
+  }
+</style>

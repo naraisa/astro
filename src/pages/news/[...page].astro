@@ -1,30 +1,55 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
-import { dateFormat } from '../utils/dateFormat';
-import PageNavi from "../components/PageNation.astro";
+import Layout from '../../layouts/Layout.astro';
+import { dateFormat } from '../../utils/dateFormat';
+import PageNavi from "../../components/PageNation.astro";
+import type { itemListSingleType } from "../../types/api";
 
 const title = 'Homepage';
 const description = 'Welcome to our homepage!';
 
 //microCMS呼び出し
-import { getBlogs, getCategory, getAllItemList } from "../library/microcms";
-// 最新10件
-let response = await getBlogs({ fields: ["id", "title", "publishedAt", "eyecatch", "category"] });
-// 全件の場合
-const all = await getAllItemList ({
-  fields: ["id", "title", "publishedAt", "eyecatch", "category"]
-});
-// カテゴリ一覧
-const category = await getCategory();
+import { getBlogs, getCategory, getAllItemList } from "../../library/microcms";
 
-// 最新5件へ
-response.contents = response.contents.slice(0,5);
+const PER_PAGE = 10;
+
+export async function getStaticPaths({ paginate }: any) {
+  const response = await getAllItemList({
+    fields: ["id", "title", "publishedAt", "eyecatch", "category"],
+  });
+  const list = response;
+  //paginate()関数を使う
+  return paginate(list, { pageSize: 10 });
+}
+
+//受け取る型
+// interface Props {
+//   page: {
+//     data: itemListSingleType[];
+//     start: number;
+//     end: number;
+//     size: number;
+//     total: number;
+//     currentPage: number;
+//     lastPage: number;
+//     url: {
+//       current: string;
+//       next: string;
+//       prev: string;
+//     };
+//   };
+// }
+
+const { page } = Astro.props;
+const response = await getBlogs({ fields: ["id", "title", "publishedAt", "eyecatch", "category"] });
+const category = await getCategory();
+// const all = await getAllItemList ({
+//   fields: ["id", "title", "publishedAt", "eyecatch", "category"]
+// });
 ---
 
 <Layout title={ title } description={ description }>
   <div class="mv">
-    Home
+    News
   </div>
   <div class="">
     <ul class="tags">
@@ -38,9 +63,13 @@ response.contents = response.contents.slice(0,5);
   <div>
     <hr>
   </div>
+  <div class="state">
+    <p>{`全部で${page.lastPage}ページ`}</p>
+    <p>{`いま${page.currentPage}ページ目です`}</p>
+  </div>
   <ul class="list">
     {
-      response.contents.map((content: any) => (
+      page.data.map((content: any) => (
       // all.map((content: any) => (
         <li>
           <p style="width: 100%;">{dateFormat(content.publishedAt)}</p>
@@ -61,13 +90,19 @@ response.contents = response.contents.slice(0,5);
       ))
     }
   </ul>
-  <div class="more">
-    <a href="/news" class="">MORE</a>
-  </div>
+  {page && <PageNavi url="/news" itemList={page} />}
 </Layout>
 
 
 <style scoped>
+  .state {
+    width: 80%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1em;
+    font-size: 90%;
+  }
   .thumb {
     width: 100px;
     height: 100px;
@@ -100,24 +135,6 @@ response.contents = response.contents.slice(0,5);
     border-radius: 0.4em;
     font-size: 80%;
     padding: 0.2em .8em;
-  }
-
-  .more {
-    display: flex;
-    justify-content: center;
-    padding: 0 0 2em 0;
-
-    a {
-      display: flex;
-      width: 50%;
-      max-width: 20em;
-      height: 3em;
-      background-color: cadetblue;
-      color: #fff;
-      justify-content: center;
-      align-items: center;
-      text-decoration: none;
-    }
   }
 
 </style>

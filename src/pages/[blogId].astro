@@ -36,7 +36,6 @@ for(let i = 0; i < all.contents.length; i++) {
 <Layout title={blog.title}>
   <main style="padding:2em">
     <h1 class="title">{blog.title}</h1>
-    <!-- dateFormat(blog.publishedAt) -->
     <p class="publishedAt">公開日時：{dateFormat(blog.publishedAt)}</p>
     {
       blog.category ? (
