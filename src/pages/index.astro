@@ -49,7 +49,7 @@ response.contents = response.contents.slice(0,5);
               <div class="tag-wrap"><a href={`/category/${content.category.id}`} class="tag">{content.category.name}</a></div>
             )
           }
-          <a href={content.id}>
+          <a href={`/${content.id}`}>
             <p>{content.title}</p>
             <div class="thumb">
               {content.eyecatch && (
