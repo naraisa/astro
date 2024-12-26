@@ -1,12 +1,12 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { getBlogs, getBlogDetail } from "../library/microcms";
+import { getBlogs, getBlogDetail, getAllItemList } from "../library/microcms";
 import { dateFormat } from '../utils/dateFormat';
 
 // 詳細記事ページの全パスを取得
 export async function getStaticPaths() {
-  const response = await getBlogs({ fields: ["id"] });
-  return response.contents.map((content: any) => ({
+  const response = await getAllItemList({ fields: ["id"] });
+  return response.map((content: any) => ({
     params: {
       blogId: content.id,
     },
